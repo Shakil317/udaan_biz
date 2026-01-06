@@ -15,6 +15,8 @@ class ContactProvider with ChangeNotifier {
   TextEditingController numberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController givenController = TextEditingController();
+  TextEditingController familyController = TextEditingController();
+
   List<Contact> contacts = [];
   bool isLoading = true;
 
@@ -25,6 +27,17 @@ class ContactProvider with ChangeNotifier {
     } else {
       searchAnimationController.reverse();
       searchController.clear();
+    }
+    notifyListeners();
+  }
+
+  void loadFirstContactDetails() {
+    if (contacts.isNotEmpty) {
+      final contact = contacts.first;
+
+      givenController.text = contact.name.first ?? '';
+      familyController.text = contact.name.last ?? '';
+      emailController.text = contact.emails.isNotEmpty ? contact.emails.first.address : '';
     }
     notifyListeners();
   }
@@ -69,7 +82,7 @@ class ContactProvider with ChangeNotifier {
     var addUser = {
       "name": contactName,
       "number": userContactNumber,
-      "userId_321": userId.replaceAll('-', ' ').substring(0, 16),
+      "userId_321": userId.replaceAll('-', ' ').substring(0, 6),
     };
     await DatabaseHelper().insertUser(addUser);
     showData();

@@ -3,21 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mycalculator/Utils/app_roots.dart';
-import 'package:mycalculator/app_dialog.dart';
+import 'package:mycalculator/Utils/app_dialog.dart';
 import 'package:mycalculator/calculator_screens/calculator_screen.dart';
 import 'package:mycalculator/screens/downloas_pdf_screen.dart';
 import 'package:mycalculator/screens/tamplete_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../Utils/about_app.dart';
 import '../Utils/app_them.dart';
 import '../ViewModels/transition_history_provider.dart';
 class TransitionHistoryScreen extends StatefulWidget {
   final String? name;
   final int? id;
   final String? image;
-  final String? usersData;
+  final String number;
+  final double? totalAmount;
 
-  const TransitionHistoryScreen(
-      {super.key, this.name, this.id, this.image, this.usersData});
+   const TransitionHistoryScreen(
+      {super.key, this.name, required this.number, this.id, this.image, this.totalAmount});
 
   @override
   State<TransitionHistoryScreen> createState() =>
@@ -26,14 +29,18 @@ class TransitionHistoryScreen extends StatefulWidget {
 
 class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
   late TransitionHistoryProvider creditProvider;
+  bool isSelectionMode = false;
+  Set<int> selectedIds = {};
   @override
   void initState() {
+    AboutApp.enableScreenshot();
     super.initState();
     creditProvider =
         Provider.of<TransitionHistoryProvider>(context, listen: false);
     creditProvider.usersId = widget.id!;
     creditProvider.transitionList.clear();
     creditProvider.showAmountTransition();
+    creditProvider.amount = widget.totalAmount??0.0;
   }
 
   @override
@@ -41,27 +48,43 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
     creditProvider =
         Provider.of<TransitionHistoryProvider>(context, listen: false);
     return Scaffold(
-      backgroundColor: AppThem.appBgColor,
-      appBar: AppBar(
+      appBar:
+      AppBar(
         backgroundColor: const Color(0xff010c17),
         title: Text(widget.name ?? "Customer",
-            style: const TextStyle(
+            style:  TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white)),
+                color: AppThem.appTextColor)),
         leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 12.0),
           child: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            backgroundImage: widget.image != null && widget.image!.isNotEmpty
-                ? FileImage(File(widget.image!))
-                : const AssetImage('assets/images/Profile_image.png')
-                    as ImageProvider,
+            radius: 21,
+            backgroundColor: AppThem.appTextColor,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.black,
+              backgroundImage: (widget.image != null && widget.image!.isNotEmpty)
+                  ? FileImage(File(widget.image!))
+                  : null,
+              child: (widget.image == null || widget.image!.isEmpty)
+                  ? Text(
+                (widget.name != null && widget.name!.isNotEmpty)
+                    ? widget.name![0].toUpperCase()
+                    : '?',
+                style:  TextStyle(
+                  color: AppThem.appTextColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+                  : null,
+            ),
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+            icon:  Icon(Icons.picture_as_pdf, color: AppThem.appTextColor),
             onPressed: () {
               AppRoot.appRoutePush(
                 context: context,
@@ -79,262 +102,230 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
           itemBuilder: (context, index) {
             var item = data.transitionList[index];
             bool isReceived = item.isReceived == 'isReceive';
-            return isReceived
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                      right: 50,
-                    ),
-                    child: GestureDetector(
-                      onLongPress: () {
-                        AppRoot.appAlertDialog(context: context, title: "Delete", contentMes: "Are you sure you want to delete this Receive Amount ${item.receivedMoney} ?", buttonText: "Delete", toastMes: "Delete", onConfirm: () {
-                          creditProvider.checkLocalAuthTransitionDelete(context, item.transitionId!);});
-                        creditProvider.showAmountTransition();
-                      },
-                      child: Card(
-                        color: Colors.white70,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 5, vertical: 5),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(15),
-                            topLeft: Radius.circular(30),
-                            bottomRight: Radius.circular(15),
-                            bottomLeft: Radius.circular(0),
-                          ),
-                          side: BorderSide(
-                            color: Colors.black12,
-                            width: 2,
-                          ),
-                        ),
-                        child: ListTile(
-                          title: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 10),
-                                      child: Text(
-                                        "ReceiveMoney",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: isReceived
-                                              ? Colors.green.shade900
-                                              : Colors.black,
-                                          fontSize: 18,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 5,
-                                    ),
-                                    child: Text(
-                                      "₹${item.receivedMoney}/-",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: isReceived
-                                            ? Colors.green.shade900
-                                            : Colors.black,
-                                        fontSize: 21,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          subtitle: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 0, top: 0, right: 10),
-                                    child: Text(
-                                      "Date:${item.currentDate}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: isReceived
-                                            ? Colors.black
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    // Wrap Text widget inside Expanded to prevent overflow
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 0, right: 10),
-                                      child: Text(
-                                        "${item.remarkItem}",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 16,
-                                          fontStyle: FontStyle.italic,
-                                          color: isReceived
-                                              ? Colors.black
-                                              : Colors.black87,
-                                        ),
-                                        overflow: TextOverflow
-                                            .ellipsis, // Handle overflow
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 40, top: 0),
-                                    child: Text(
-                                      "Time ${item.currentTime}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        color: isReceived
-                                            ? Colors.black
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 5),
-                    child: GestureDetector(
-                      onLongPress: () {
-                        AppRoot.appAlertDialog(context: context, title: "Delete", contentMes: "Are you sure you want to delete this Loaned Amount ${item.loanedMoney}?", buttonText: "Delete", toastMes: "Delete", onConfirm: () {
-                          creditProvider.checkLocalAuthTransitionDelete( context, item.transitionId);
-                        });
-                        creditProvider.showAmountTransition();
-                      },
-                      child: Card(
-                        color: Colors.white70,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 5, vertical: 5),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(0),
-                              topLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(30),
-                              bottomLeft: Radius.circular(15)),
-                          side: BorderSide(
-                            color: Colors.black87,
-                            width: 2,
-                          ),
-                        ),
-                        child: ListTile(
-                          title: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 10),
-                                      child: Text(
-                                        "LoanedMoney",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: isReceived
-                                              ? Colors.green
-                                              : Colors.red,
-                                          fontSize: 18,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    "₹${item.loanedMoney}/-",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: isReceived
-                                          ? Colors.green.shade900
-                                          : Colors.red,
-                                      fontSize: 21,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          subtitle: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 0, top: 0, right: 10),
-                                    child: Text(
-                                      "Date: ${item.currentDate}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: isReceived
-                                            ? Colors.black
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    // Wrap Text widget inside Expanded to prevent overflow
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 0, right: 10),
-                                      child: Text(
-                                        "${item.remarkItem}",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 16,
-                                          fontStyle: FontStyle.italic,
-                                          color: isReceived
-                                              ? Colors.black
-                                              : Colors.black87,
-                                        ),
-                                        overflow: TextOverflow
-                                            .ellipsis, // Handle overflow
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 10, top: 0),
-                                    child: Text(
-                                      "Time : ${item.currentTime}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        color: isReceived
-                                            ? Colors.black
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+            return isReceived ?
+            Padding(
+              padding: const EdgeInsets.only(right: 50),
+              child: GestureDetector(
+                onTap: () {
+                  AppRoot.appAlertDialog(
+                    context: context,
+                    title: "Delete",
+                    contentMes:
+                    "Are you sure you want to delete this Receive Amount ₹${item.receivedMoney}?",
+                    buttonText: "Delete",
+                    toastMes: "Delete",
+                    onConfirm: () {
+                      creditProvider.checkLocalAuthTransitionDelete(
+                          context, item.transitionId!);
+                    },
                   );
+                  creditProvider.showAmountTransition();
+                },
+                onLongPress: () {
+                    isSelectionMode = true;
+                    selectedIds.add(item.transitionId); // first selected item
+
+                },
+                child: Card(
+                  color: Colors.white70,
+                  elevation: 3,
+                  shadowColor: Colors.black26,
+                  margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: const BorderSide(color: Colors.black12, width: 1.2),
+                  ),
+                  child:
+                  Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "Receive Money",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade800,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "₹${item.receivedMoney}/-",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green.shade900,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            IconButton(
+                              icon:   Icon(Icons.south_west_rounded, color: Colors.green.shade500),
+                              tooltip: "Send Message",
+                              onPressed: () async{
+                                String presetMessage =
+                                    "नमस्ते ${widget.name}, आज आपने ₹${item.receivedMoney ?? '00'} जमा किए हैं। आपके विश्वास और भुगतान के लिए धन्यवाद!🙂";
+
+                                final sms = Uri.parse(
+                                    'sms:${widget.number.toString()}?body=${Uri.encodeComponent(presetMessage)}');
+
+                                if (await canLaunchUrl(sms)) {
+                                  await launchUrl(sms);
+                                } else {
+                                  Fluttertoast.showToast(msg: "Could not send message");
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Date: ${item.currentDate}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              "Time: ${item.currentTime}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            item.remarkItem ?? "",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+                :
+            Padding(
+              padding: const EdgeInsets.only(left: 50, right: 6),
+              child: GestureDetector(
+                onLongPress: () {
+                  AppRoot.appAlertDialog(
+                    context: context,
+                    title: "Delete",
+                    contentMes:
+                    "Are you sure you want to delete this Loaned Amount ₹${item.loanedMoney}?",
+                    buttonText: "Delete",
+                    toastMes: "Delete",
+                    onConfirm: () {
+                      creditProvider.checkLocalAuthTransitionDelete(
+                          context, item.transitionId);
+                    },
+                  );
+                  creditProvider.showAmountTransition();
+                },
+                child:
+                Card(
+                  color: Colors.white70,
+                  elevation: 3,
+                  shadowColor: Colors.black26,
+                  margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: const BorderSide(color: Colors.black26, width: 1.2),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "Loaned Money",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade700,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "₹${item.loanedMoney}/-",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red.shade800,
+                                fontSize: 21,
+                              ),
+                            ),
+
+                            IconButton(
+                              icon: const Icon(Icons.north_east_rounded, color: Colors.redAccent),
+                              tooltip: "Send Reminder Message",
+                              onPressed: ()async {
+                                String presetMessage =
+                                    "नमस्ते ${widget.name}, आज ₹${item.loanedMoney ?? '00'} की एंट्री आपके उधारी खाते में जोड़ी गई है। कृपया अपनी नोटबुक में भी दर्ज कर लें। धन्यवाद! 🙏";
+                                final sms = Uri.parse(
+                                    'sms:${widget.number.toString()}?body=${Uri.encodeComponent(presetMessage)}');
+                                if (await canLaunchUrl(sms)) {
+                                  launchUrl(sms);
+                                } else {
+                                  throw 'Could not launch $sms';
+                                }
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Date: ${item.currentDate}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              "Time: ${item.currentTime}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            item.remarkItem ?? "",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
           },
         );
       }),
@@ -351,7 +342,8 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
-              child: Row(
+              child:
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Row(
@@ -362,10 +354,11 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                           showAppDialog(
                               dialogTitle: "Received Money",
                               controllerType:
-                                  creditProvider.debitAmountController,
+                                  creditProvider.receiveAmountController,
                               states: 'isReceive');
                         },
-                        child: Padding(
+                        child:
+                        Padding(
                           padding: const EdgeInsets.only(bottom: 0),
                           child: Container(
                             height: 50,
@@ -373,18 +366,18 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                             decoration: BoxDecoration(
                                 color: AppThem.appBgColor,
                                 borderRadius: BorderRadius.circular(30)),
-                            child: const Row(
+                            child:  Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.arrow_downward,
-                                  color: Colors.white,
+                                  color: AppThem.appTextColor,
                                   size: 30,
                                 ),
                                 Text(
                                   "Receive",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppThem.appTextColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -398,13 +391,14 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                   ),
                   Column(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 0),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 0),
                         child: Text(
                           "Your Collections",
                           style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white,
+                              color: AppThem.appTextColor,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -416,7 +410,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               child: Text("\u20B9 ${creditProvider.yourCollectionData}",
                                 style: TextStyle(
                                     fontSize: 20,
-                                    color: Colors.redAccent.shade200),
+                                    color: AppThem.collectionTextColor),
                               ),
                             ),
                           ),
@@ -429,10 +423,11 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          showAppDialog(dialogTitle: "Loaned Money", controllerType: creditProvider.creditAmountController, states: 'isLoaned');
+                          showAppDialog(dialogTitle: "Loaned Money", controllerType: creditProvider.loanedAmountController, states: 'isLoaned');
                           creditProvider.clearControllers();
                         },
-                        child: Padding(
+                        child:
+                        Padding(
                           padding: const EdgeInsets.only(bottom: 0),
                           child: Container(
                             height: 50,
@@ -440,18 +435,18 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                             decoration: BoxDecoration(
                                 color: AppThem.appBgColor,
                                 borderRadius: BorderRadius.circular(30)),
-                            child: const Row(
+                            child:  Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.arrow_upward,
-                                  color: Colors.white,
+                                  color: AppThem.appTextColor,
                                   size: 30,
                                 ),
-                                Text(
+                                 Text(
                                   "Loaned",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppThem.appTextColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -490,7 +485,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.5+10,
               width: double.infinity,
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -685,24 +680,19 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                           ),
                           onPressed: () {
                             if (controllerType.text.isNotEmpty ||
-                                creditProvider
-                                    .productRemarkController.text.isNotEmpty) {
-                              creditProvider.insertNewTransition(
-                                context,
-                                status: states.toString(),
-                              );
+                                creditProvider.productRemarkController.text.isNotEmpty) {creditProvider.insertNewTransition(context, status: states.toString(),);
                               Navigator.pop(context);
                             } else {
                               Fluttertoast.showToast(
                                   msg: "Please fill in Amount and Remark");
                             }
                           },
-                          child: const Text(
+                          child:  Text(
                             "Save",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: AppThem.appTextColor,
                             ),
                           ),
                         ),

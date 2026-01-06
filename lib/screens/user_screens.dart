@@ -2,36 +2,40 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:mycalculator/Utils/about_app.dart';
 import 'package:mycalculator/Utils/app_roots.dart';
 import 'package:mycalculator/ViewModels/user_profile_provider.dart';
 import 'package:mycalculator/ViewModels/user_provider.dart';
-import 'package:mycalculator/app_dialog.dart';
-import 'package:mycalculator/screens/downloas_pdf_screen.dart';
-import 'package:mycalculator/screens/tamplete_screen.dart';
+import 'package:mycalculator/Utils/app_dialog.dart';
+import 'package:mycalculator/screens/setting_screen.dart';
 import 'package:mycalculator/screens/transition_history_screen.dart';
-import 'package:mycalculator/screens/update_user_screen.dart';
+import 'package:mycalculator/screens/user_update_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../Utils/app_them.dart';
 import '../ViewModels/transition_history_provider.dart';
+
 class UserScreens extends StatefulWidget {
   final int? id;
   final String? name;
   final String? userData;
-  const UserScreens({super.key,this.id, this.name, this.userData});
+
+  const UserScreens({super.key, this.id, this.name, this.userData});
+
   @override
   State<UserScreens> createState() => _UserScreensState();
 }
+
 class _UserScreensState extends State<UserScreens> {
   late UserProvider userProvider;
   late UserProfileProvider userProfileProvider;
   late TransitionHistoryProvider creditProvider;
 
-
   @override
   void initState() {
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    AboutApp.enableScreenshot();
     super.initState();
     userProvider.showData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -39,8 +43,7 @@ class _UserScreensState extends State<UserScreens> {
           .showProfileData();
       creditProvider =
           Provider.of<TransitionHistoryProvider>(context, listen: false);
-      creditProvider.usersId = widget.id!;
-      // creditProvider.transitionList.clear();
+      creditProvider.transitionList.clear();
       creditProvider.showAmountTransition();
     });
   }
@@ -50,281 +53,40 @@ class _UserScreensState extends State<UserScreens> {
     userProvider = Provider.of<UserProvider>(context);
     userProfileProvider =
         Provider.of<UserProfileProvider>(context, listen: false);
-    return Scaffold(
-      backgroundColor: AppThem.appBgColor,
-      drawer:
-      Drawer(
-        backgroundColor:  const Color(0xff010c17),
-        width: MediaQuery.of(context).size.width * 0.7,
-        child: Container(
-          color: const Color(0xFF1d2630),
-          height: MediaQuery.of(context).size.height*0.5,
-          width: MediaQuery.of(context).size.width * 0.3,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                        margin: const EdgeInsets.only(top: 50, left: 0),
-                        height: 100,
-                        width: 200,
-                        child: InkWell(
-                          onTap: () {
-            
-                          },
-                          child: Consumer<UserProfileProvider>(
-                            builder: (context, profileData, child) {
-                              var profile = profileData.userProfile;
-                              return ListView.builder(
-                                itemCount: profile.length,
-                                itemBuilder: (context, index) {
-                                  final item = profile[index];
-                                  final hasImage = item.profileImage != null ||
-                                      item.profileImage!.isNotEmpty;
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 16.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap:() async{
-                                            await AppDialog.myProfileDialog(context);
-                                            },
-                                          child: CircleAvatar(
-                                            radius: 30,
-                                            backgroundColor: Colors.white,
-                                            foregroundImage: hasImage
-                                                ? (item.profileImage!
-                                                        .startsWith('assets/')
-                                                    ? AssetImage(item.profileImage!)
-                                                    : FileImage(
-                                                        File(item.profileImage!)))
-                                                :  const AssetImage(
-                                                    'assets/images/main_home_image.jpeg'),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 12.0),
-                                            child: Text(
-                                              item.shopName ?? "ABC Store",
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white),
-                                              overflow: TextOverflow.visible,
-                                              softWrap: false,
-                                              maxLines: 2,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        )),
-                      Positioned(
-                        top: 120,
-                        left: 62,
-                        child:GestureDetector (
-                          onTap: () {
-                            AppDialog.myProfileDialog(context);
-                                  },
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 12,
-                            backgroundImage:
-                                AssetImage("assets/images/udaan_biz_logo.png"),
-                          ),
-                        ))
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Share Your Cards",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Icon(
-                        Icons.tablet_mac,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          AppDialog.navigatePage(
-                              context, const AdminTemplateListScreen(id: null,));
-                        },
-                        child: const Text(
-                          "Use New Template",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Icon(
-                        Icons.play_circle,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Remove Adds",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Icon(
-                        Icons.insert_invitation,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Share Your Card",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Icon(
-                        Icons.settings,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Settings",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                     Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: CircleAvatar(
-                        radius: 10,
-                        backgroundImage:
-                            AssetImage("assets/images/udaan_biz_logo.png"),
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Share App",
-                          style: TextStyle(fontSize: 18, color: Colors.white70),
-                        )),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-      appBar: AppBar(
-        title: const Text("Customers",
-            style: TextStyle(
-                fontSize: 21,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xff010c17),
-        iconTheme: const IconThemeData(color: Colors.white),
 
-      ),
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: Consumer<UserProvider>(
         builder: (context, value, child) {
           return Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                 child: TextField(
                   controller: value.searchController,
                   onChanged: (query) {
                     value.searchUsers(query);
                   },
-                  cursorColor: Colors.white70,
-                  style: const TextStyle(fontSize: 10, color: Colors.white70),
+                  cursorColor: AppThem.appBgColor,
+                  style: const TextStyle(
+                      fontSize: 14, color: AppThem.appBgColor),
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: Colors.white70,
-                    ),
+                    prefixIcon: const Icon(Icons.search,
+                        color: AppThem.appBgColor),
                     suffixIcon: IconButton(
                         onPressed: () {},
-                        icon: const Icon(
-                          Icons.mic,
-                          color: Colors.white70,
-                        )),
-                    hintText: "Search User....",
-                    border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(20),
-                          topLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                          bottomLeft: Radius.circular(20),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                          style: BorderStyle.solid,
+                        icon: Icon(Icons.mic,)),
+                    hintText: "Search User By Name....",
+                    hintStyle: TextStyle(fontSize: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
                           width: 2,
-                          strokeAlign: Material.defaultSplashRadius,
-                        ),
-                        gapPadding: 2),
-                    fillColor: Colors.white,
+                          style: BorderStyle.solid),
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: const BorderSide(
-                        color: Colors.white60,
                         width: 2,
                       ),
                     ),
@@ -332,152 +94,248 @@ class _UserScreensState extends State<UserScreens> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  reverse: DateFormat.d().format(DateTime.now()) == "01"
-                      ? true
-                      : false,
+                child: value.filteredUsers.isEmpty
+                    ? const Center(
+                  child: Text(
+                    "No Users Found",
+                    style:
+                    TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                )
+                    : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   itemCount: value.filteredUsers.length,
                   itemBuilder: (context, index) {
                     var user = value.filteredUsers[index];
-                    return Column(
-                      children: [
-                        ListTile(
-                          onLongPress: () {
-                            AppRoot.appAlertDialog(context: context, title: "Delete User", contentMes: "Are you sure you want to delete User ${user.name}?", buttonText: "Yes", toastMes: "User Delete Success", onConfirm: () {
-                              value.checkLocalAuthAndDeleteUser(
-                                  context, index);
-                            },);
-                          },
-                          onTap: () {
-                            AppDialog.navigatePage(
-                                context,
-                                TransitionHistoryScreen(
-                                  id: user.id,
-                                  name: user.name,
-                                  image: user.image,
-                                ));
-                          },
-                          title: Text(
-                            user.name ?? widget.name!,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 18),
-                          ),
-                          subtitle: Row(
-                            children: [
-                              Text(
-                                user.number.toString(),
-                                style: const TextStyle(
-                                    color: Colors.white70, fontSize: 15),
-                              ),
-                              Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 25,
-                                    ),
-                                    child: Text(
-                                      DateFormat('dd MMM -yy')
-                                          .format(DateTime.now()),
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 10),
-                                    ),
+                    var amount = double.tryParse(
+                        user.userCollections ?? '0') ?? 0.0;
+
+                    return GestureDetector(
+                      onTap: () async {
+                        var result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TransitionHistoryScreen(
+                                    name: user.name,
+                                    id: user.id,
+                                    number: user.number.toString(),
+                                    image: user.image,
+                                    totalAmount: amount,
                                   ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 30, top: 5),
-                                    child: Text("₹ ${(user.userCollections?.toString().isNotEmpty ?? false) ? user.userCollections : '00'}",
-                                      style: TextStyle(
-                                          color: Colors.redAccent.shade100,
-                                          fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          leading: GestureDetector(
-                            child: InstaImageViewer(
+                            ));
+                        if (result != "") {
+                          Provider.of<UserProvider>(context,
+                              listen: false)
+                              .showData();
+                        }
+                      },
+                      onLongPress: () {
+                        AppRoot.appAlertDialog(
+                          context: context,
+                          title: "Delete User",
+                          contentMes:
+                          "Are you sure you want to delete User ${user.name}?",
+                          buttonText: "Yes",
+                          toastMes: "User Delete Success",
+                          onConfirm: () {
+                            value.checkLocalAuthAndDeleteUser(
+                                context, index);
+                          },
+                        );
+                      },
+                      child:
+                      Card(
+                        color: Colors.grey[50],
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 6.0, horizontal: 8),
+                          child: ListTile(
+                            contentPadding:
+                            const EdgeInsets.symmetric(
+                                horizontal: 5),
+                            leading: InstaImageViewer(
                               child: CircleAvatar(
-                                radius: 25,
-                                backgroundColor: AppThem.appPrimaryColor,
-                                backgroundImage: (user.image != null &&
-                                        user.image!.isNotEmpty)
-                                    ? FileImage(File(user.image!))
-                                    : null,
-                                child:
-                                    (user.image == null || user.image!.isEmpty)
-                                        ? Text(
-                                            (user.name != null &&
-                                                    user.name!.isNotEmpty)
-                                                ? user.name![0].toUpperCase()
-                                                : '',
-                                            style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : null,
+                                radius: 26,
+                                backgroundColor:Colors.orange.shade400,
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage: (user.image != null && user.image!.isNotEmpty) ? FileImage(File(user.image!)) : null,
+                                  child: (user.image == null || user.image!.isEmpty) ? Text(
+                                    (user.name != null &&
+                                        user.name!
+                                            .isNotEmpty)
+                                        ? user.name![0]
+                                        .toUpperCase()
+                                        : '',
+                                    style: const TextStyle(
+                                      fontSize: 21,
+                                      fontWeight:
+                                      FontWeight.bold,
+                                    ),
+                                  )
+                                      : null,
+                                ),
                               ),
                             ),
-                          ),
-                          trailing: PopupMenuButton(
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.white),
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                child: ListTile(
-                                  leading: const Icon(Icons.call,
-                                      color: AppThem.appBgColor),
-                                  title: Text("Calling",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppThem.appPrimaryColor)),
-                                  onTap: () {
-                                    launchUrlString(
-                                        "tel://${user.number.toString()}");
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                              PopupMenuItem(
-                                child: ListTile(
-                                  leading: const Icon(Icons.message,
-                                      color: AppThem.appBgColor),
-                                  title: Text("Message",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppThem.appPrimaryColor)),
-                                  onTap: () async {
-                                    final sms = Uri.parse(
-                                        'sms:${user.number.toString()}');
-                                    if (await canLaunchUrl(sms)) {
-                                      launchUrl(sms);
-                                    } else {
-                                      throw 'Could not launch $sms';
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                              PopupMenuItem(
-                                child: ListTile(
-                                  leading: const Icon(Icons.edit_note,
-                                      color: AppThem.appBgColor),
-                                  title: Text("Update User",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppThem.appPrimaryColor)),
-                                  onTap: () {
-                                    AppDialog.navigatePage(context, UpdateUserScreen(user: user,));
 
-                                  },
+                            // 🔹 Title and Date
+                            title: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        user.name ?? widget.name!,
+                                        overflow:
+                                        TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      DateFormat('dd MMM -yy').format(
+                                          DateTime.now()),
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 4),
+                              ],
+                            ),
+                            subtitle: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    user.number.toString(),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "₹ ${(user.userCollections?.toString().isNotEmpty ?? false) ? user.userCollections : '00'}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: PopupMenuButton(
+                              icon: const Icon(Icons.more_vert),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  child: ListTile(
+                                    leading: const Icon(Icons.call,
+                                        color: AppThem.appBgColor),
+                                    title: Text("Calling",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppThem
+                                                .appSecondaryColor)),
+                                    onTap: () {
+                                      launchUrlString(
+                                          "tel://${user.number.toString()}");
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  child: ListTile(
+                                    leading: const Icon(Icons.share,
+                                        color: AppThem.appBgColor),
+                                    title: Text("WhatApp Chat",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppThem
+                                                .appSecondaryColor)),
+                                    onTap: () async {
+                                      final sms = Uri.parse(
+                                          'sms:${user.number.toString()}');
+                                      if (await canLaunchUrl(sms)) {
+                                        launchUrl(sms);
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  child: ListTile(
+                                    leading: const Icon(Icons.message,
+                                        color: AppThem.appBgColor),
+                                    title: Text("Message",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppThem
+                                                .appSecondaryColor)),
+                                    onTap: () async {
+                                      String presetMessage =
+                                          "नमस्ते ${user.name}, आपकी वर्तमान बकाया राशि ${user.userCollections ?? '00'}₹ है। कृपया सुनिश्चित करें कि भुगतान 10 दिनों के भीतर कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सकें। ${userProfileProvider.userProfile[0].shopName}🙏";
+                                      final sms = Uri.parse(
+                                          'sms:${user.number.toString()}?body=${Uri.encodeComponent(presetMessage)}');
+                                      if (await canLaunchUrl(sms)) {
+                                        launchUrl(sms);
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  child: ListTile(
+                                    leading: const Icon(Icons.edit,
+                                        color: AppThem.appBgColor),
+                                    title: Text("Update",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppThem
+                                                .appSecondaryColor)),
+                                    onTap: () {
+                                      AppDialog.navigatePage(
+                                          context,
+                                          UpdateUserScreen(user: user));
+                                    },
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  child: ListTile(
+                                    leading: const Icon(Icons.settings,
+                                        color: AppThem.appBgColor),
+                                    title: Text("Settings",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppThem
+                                                .appSecondaryColor)),
+                                    onTap: () {
+                                      AppDialog.navigatePage(
+                                          context,
+                                          const SettingScreen());
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
+                      ),
                     );
                   },
                 ),
@@ -486,33 +344,40 @@ class _UserScreensState extends State<UserScreens> {
           );
         },
       ),
+
+      // 🔹 Floating Button
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-           const SizedBox(height: 20),
+          const SizedBox(height: 20),
           FloatingActionButton.extended(
             onPressed: () {
-              AppDialog.showUserProfileDialog(context);
+              AppDialog.createNewUserDialog(context);
               userProvider.clearController();
             },
             label: const Row(
-              mainAxisSize: MainAxisSize.max,
               children: [
-                Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                Text(
-                  'Add Person',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
+                Icon(Icons.add, color: Colors.white, size: 30),
+                SizedBox(width: 5),
+                Text('Add Person',
+                    style: TextStyle(color: Colors.white, fontSize: 18)),
               ],
             ),
-            backgroundColor: AppThem.appPrimaryColor,
+            backgroundColor: AppThem.appSecondaryColor,
           ),
         ],
       ),
     );
+  }
+
+  String formatText(String text, int maxCharsPerLine) {
+    List<String> lines = [];
+    for (int i = 0; i < text.length; i += maxCharsPerLine) {
+      int end = (i + maxCharsPerLine < text.length)
+          ? i + maxCharsPerLine
+          : text.length;
+      lines.add(text.substring(i, end));
+    }
+    return lines.join('\n');
   }
 }

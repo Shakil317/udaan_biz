@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "98199896010",
+    "firebase_url": "https://firbaseprojectadddelete-default-rtdb.firebaseio.com",
+    "project_id": "firbaseprojectadddelete",
+    "storage_bucket": "firbaseprojectadddelete.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98199896010:android:90e4da0c3ce728c22e9933",
+        "android_client_info": {
+          "package_name": "com.shakil.udaanbiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98199896010-n5i4e5vgnnctd48ueb5eut2m9s3ia2vg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJfVI6JzOPyNs-_dsp0UJ2Zlwc79Ffb0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98199896010-n5i4e5vgnnctd48ueb5eut2m9s3ia2vg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "98199896010-smpf2jun5vo9dsmspjjlfi3b9vdqmv9b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.edu.gaon.udaanbiz"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

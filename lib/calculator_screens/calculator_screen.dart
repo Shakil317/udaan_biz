@@ -11,7 +11,7 @@ class CalculateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var calculatorProvider = Provider.of<CalculateProvider>(context);
     return Scaffold(
-      backgroundColor: AppThem.appBgColor,
+      backgroundColor:AppThem.appBgColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -20,106 +20,105 @@ class CalculateScreen extends StatelessWidget {
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 height: MediaQuery.of(context).size.height / 3.35,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 0, right: 5),
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AdvancedCalculateScreen(),
-                                  ));
-                            },
-                            icon: const FaIcon(
-                              FontAwesomeIcons.squareRootVariable,
-                              // Square root symbol
-                              color: Colors.white,
-                              size: 20,
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0, right: 5),
+                            child: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AdvancedCalculateScreen(),
+                                    ));
+                              },
+                              icon: const FaIcon(
+                                FontAwesomeIcons.squareRootVariable,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0, right: 10),
+                            child: IconButton(
+                                onPressed: () {
+                                 calculatorProvider.checkLocalAuth(context);
+                                },
+                                icon: const Icon(
+                                  Icons.history,
+                                  size: 20,
+                                )),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(20),
+                        alignment: Alignment.bottomRight,
+                        child: SingleChildScrollView(
+                          controller: calculatorProvider.scrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 2, right: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  calculatorProvider.userInput,
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 0, right: 10),
-                          child: IconButton(
-                              onPressed: () {
-                               calculatorProvider.checkLocalAuth(context);
-                              },
-                              icon: const Icon(
-                                Icons.history,
-                                color: Colors.white,
-                                size: 20,
-                              )),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.bottomRight,
-                      child: SingleChildScrollView(
-                        controller: calculatorProvider.scrollController,
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 2, right: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                calculatorProvider.userInput,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                  fontSize: 32,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(top: 8, right: 2),
-                      alignment: Alignment.bottomRight,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 10,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Text(
-                                    calculatorProvider.result,
-                                    style: TextStyle(
-                                        fontSize: calculatorProvider.result.length > 12 ? 35 : 48, color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                      Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.only(top: 2, right: 2),
+                        alignment: Alignment.bottomRight,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 10,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Text(
+                                      calculatorProvider.result,
+                                      style: TextStyle(
+                                          fontSize: calculatorProvider.result.length > 12 ? 35 : 48,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-            const Divider(
+             const Divider(
               color: Colors.white70,
+              thickness:4 ,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +137,7 @@ class CalculateScreen extends StatelessWidget {
                           icon: const Icon(
                             Icons.backspace,
                             color: Colors.red,
-                            size: 18,
+                            size: 32,
                           )),
                     )
                   ],
@@ -147,7 +146,7 @@ class CalculateScreen extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.only(top: 0.0,left: 5.0,right: 5.0,bottom: 5.0),
                 child: GridView.builder(
                   itemCount: calculatorProvider.buttonList.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

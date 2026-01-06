@@ -86,7 +86,8 @@ class DatabaseHelper {
   }
   Future<int> updateTransition(Map<String, dynamic> transition,int transitionId)async{
     var db = await insertDatabase();
-    return   db.update(transactionsTable, transition,where: "transitionId=?",whereArgs: [transitionId]);
+    return   db.update(transactionsTable, transition,where: "transitionId=?",
+        whereArgs: [transitionId],);
   }
   Future<int> deleteTransition(int transitionId) async {
     var db = await insertDatabase();
@@ -96,13 +97,11 @@ class DatabaseHelper {
   /// await db.query('transitions', where: 'userId = ?', whereArgs: [userId]);
   ///db.query(transactionsTable)
   Future<List<Map<String,dynamic>>> getTransition({required var userId})async{
-    /// if (kDebugMode) {
-    ///   print("check userid :: $userId");
-    /// }
     var db = await insertDatabase();
     return   db.query(transactionsTable,
       where: 'usersId = ?',
-      whereArgs: [userId],);
+      whereArgs: [userId],
+      orderBy: '$currentDate ASC',);
   }
 
   ///Insert  Profile

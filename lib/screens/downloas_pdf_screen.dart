@@ -1,16 +1,10 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:mycalculator/Utils/about_app.dart';
 import 'package:mycalculator/Utils/app_them.dart';
-import 'package:mycalculator/app_dialog.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'dart:ui' as ui;
+import 'package:mycalculator/Utils/app_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../ViewModels/transition_history_provider.dart';
 import '../ViewModels/user_profile_provider.dart';
 
@@ -30,9 +24,11 @@ class DownloadsPdfScreenState extends StatefulWidget {
 class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
   late TransitionHistoryProvider creditProvider;
   final GlobalKey _shareKey = GlobalKey();
+  // late UserProvider userProfile;
 
   @override
   void initState() {
+    AboutApp.enableScreenshot();
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProfileProvider>(context, listen: false)
@@ -43,44 +39,6 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
       creditProvider.transitionList.clear();
       creditProvider.showAmountTransition();
     });
-  }
-
-  Future<void> _captureAndSharePDF() async {
-    try {
-      RenderRepaintBoundary boundary =
-          _shareKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-
-      var image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-      final pdf = pw.Document();
-      final imageProvider = pw.MemoryImage(pngBytes);
-
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) {
-            return pw.Center(
-              child: pw.Image(imageProvider, fit: pw.BoxFit.contain),
-            );
-          },
-        ),
-      );
-      final output = await getTemporaryDirectory();
-      final file = File("${output.path}/transaction_report.pdf");
-      await file.writeAsBytes(await pdf.save());
-
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text: 'Transaction Report PDF from UdaanBiz',
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error creating or sharing PDF: $e");
-      }
-    }
   }
 
   @override
@@ -112,15 +70,15 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: const Icon(Icons.open_with),
-                        label: const Text("Open"),
+                        icon: const Icon(Icons.download),
+                        label: const Text("Save"),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          _captureAndSharePDF();
+                          creditProvider.captureAndSharePDF();
                         },
                         icon: const Icon(Icons.share),
                         label: const Text("Share"),
@@ -142,7 +100,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                 children: [
                   const CircularProgressIndicator(color: Colors.red,),
                   const SizedBox(height: 10,),
-                  ElevatedButton(style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppThem.appButtonColor)),onPressed: () async{
+                  ElevatedButton(style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppThem.appBarColor)),onPressed: () async{
                     await AppDialog.myProfileDialog(context);
                   }, child: const Text("Update Profile",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),))
                 ],
@@ -151,11 +109,10 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
             if (provider.userProfile.isEmpty) {
               return const Center(child: Text("No profile data found"));
             }
-
             final profile = provider.userProfile[0];
             return Center(
               child: RepaintBoundary(
-                key: _shareKey,
+                key: creditProvider.sharePdfKey,
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -170,18 +127,22 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                           color: AppThem.appBgColor,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 10),
+                          padding:  EdgeInsets.only(left: 10, top: 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               InstaImageViewer(
                                 child: CircleAvatar(
-                                  radius: 25,
-                                  backgroundImage: profile.profileImage != null
-                                      ? FileImage(File(profile.profileImage!))
-                                      : const AssetImage(
-                                              "assets/images/shakilansari.jpg")
-                                          as ImageProvider,
+                                  radius: 26,
+                                  backgroundColor: Colors.white,
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundImage: profile.profileImage != null
+                                        ? FileImage(File(profile.profileImage!))
+                                        : const AssetImage(
+                                                "assets/images/udaan_biz_logo.png")
+                                            as ImageProvider,
+                                  ),
                                 ),
                               ),
                               Column(
@@ -200,10 +161,10 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                                     children: [
                                       const Icon(Icons.location_on,
                                           color: Colors.pink, size: 12),
-                                      Text(profile.bankInfo ?? "ABC Area",style: TextStyle(color: Colors.white),),
+                                      Text(profile.bankInfo ?? "ABC Area",style: const TextStyle(color: Colors.white),),
                                       const Icon(Icons.phone,
                                           color: Colors.pink, size: 12),
-                                      Text(profile.phone ?? "6206731567",style: TextStyle(color: Colors.white),),
+                                      Text(profile.phone ?? "6206731567",style: const TextStyle(color: Colors.white),),
                                     ],
                                   ),
                                 ],
@@ -257,7 +218,7 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                                             color: Colors.white,
                                             fontSize: 12))),
                                 Center(
-                                    child: Text("AllHistory",
+                                    child: Text("AllDebit",
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 12))),
@@ -418,7 +379,9 @@ class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
                           ),
                           color: AppThem.appBgColor,
                         ),
-                      ),
+                        // ग्राहक
+                        child: Padding(padding: const EdgeInsetsGeometry.only(left: 10,right: 10,top: 5,bottom: 5),
+                        child:Text("प्रिय ग्राहक ${widget.name}, कृपया सुनिश्चित करें कि भुगतान 10 दिनों के भीतर कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सकें। आपका सहयोग अपेक्षित है। धन्यवाद!",style: TextStyle(color: AppThem.appTextColor),),),),
                     ],
                   ),
                 ),

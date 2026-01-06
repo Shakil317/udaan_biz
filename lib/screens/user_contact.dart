@@ -1,12 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mycalculator/ViewModels/contact_provider.dart';
-import 'package:mycalculator/app_dialog.dart';
-import 'package:mycalculator/screens/user_screens.dart';
+import 'package:mycalculator/Utils/app_dialog.dart';
 import 'package:provider/provider.dart';
+import '../Utils/about_app.dart';
 import '../Utils/app_them.dart';
-import '../ViewModels/user_provider.dart';
+import 'home_tab_bar_screen.dart';
 
 class UserContact extends StatefulWidget {
     const UserContact({super.key,});
@@ -22,6 +20,7 @@ class _UserContactState extends State<UserContact>
   @override
   void initState() {
     var contactProvider = Provider.of<ContactProvider>(context, listen: false);
+    AboutApp.enableScreenshot();
     super.initState();
     contactProvider.searchAnimationController = AnimationController(
       vsync: this,
@@ -151,8 +150,14 @@ class _UserContactState extends State<UserContact>
                     trailing: InkWell(
                       onTap: () {
                         provider.addContactByIndex(index);
-                        AppDialog.navigatePage(context, const UserScreens());
-                      },
+                        //AppDialog.navigatePage(context, const HomeTabBarScreens());
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomeTabBarScreens()),
+                              (Route<dynamic> route) => false,
+                        );
+                        },
                       child: Container(
                         height: 30,
                         color: const Color(0xFF1d2630),
@@ -174,192 +179,11 @@ class _UserContactState extends State<UserContact>
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-         AppDialog.showUserProfileDialog(context);
+         AppDialog.createNewUserDialog(context);
         },
         label: const Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.green,
       ),
     );
   }
-
-void _showAppDialog() {
-  var provider = Provider.of<ContactProvider>(context, listen: false);
-  var userProvider = Provider.of<UserProvider>(context, listen: false);
-  showDialog(
-    context: context,
-    builder: (context) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.only(
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            width: double.infinity,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-                side: const BorderSide(
-                    width: 3, color: Colors.orange, style: BorderStyle.solid),
-              ),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 30, top: 20),
-                        child: Text(
-                          "Add New User",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      userProvider.pickNewImage();
-                    },
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: userProvider.image == null
-                          ? AssetImage("assets/images/shakilansari.jpg")
-                          : FileImage(File(userProvider.image!.path)),
-                      backgroundColor: Colors.orange,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
-                    child: TextField(
-                      controller: userProvider.nameController,
-                      keyboardType: TextInputType.name,
-                      style: const TextStyle(
-                        color: Colors.orange,
-                      ),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.orange,
-                            width: 2,
-                          ),
-                        ),
-                        labelText: "Enter Your Name",
-                        fillColor: Colors.orangeAccent,
-                        labelStyle: TextStyle(color: Colors.orange),
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Colors.orange,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          borderSide: BorderSide(
-                            color: Colors.orange,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: TextField(
-                      autocorrect: true,
-                      maxLength: 12,
-                      controller: userProvider.numberController,
-                      keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: Colors.orange),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                          borderSide: BorderSide(
-                              color: Colors.redAccent,
-                              width: 2,
-                              style: BorderStyle.solid),
-                        ),
-                        labelText: "Enter Mobile Number",
-                        fillColor: Colors.orangeAccent,
-                        labelStyle: TextStyle(color: Colors.orange),
-                        prefixIcon: Icon(
-                          Icons.phone,
-                          color: Colors.orange,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          borderSide: BorderSide(
-                            color: Colors.orange,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
-                    child: SizedBox(
-                      width: 350,
-                      height: 50,
-                      child: ElevatedButton(
-                        style:const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.orange)),
-                        onPressed: () {
-                          var name = userProvider.nameController.text.toString();
-                          var number =userProvider.numberController.text.toString();
-                          if (name.isNotEmpty && number.isNotEmpty) {
-                            String enteredName = userProvider.nameController.text.trim();
-                            String enteredPhoneNumber = userProvider.numberController.text.trim();
-                            // bool isPhoneNumberExist = provider.contacts.any((contact) {
-                            //   return contact.phones!.any((phone) => phone.value == enteredPhoneNumber);
-                            // });
-                            // bool isNameExist = provider.contacts.any((contact) {
-                            //   return contact.givenName == enteredName;
-                            // });
-                            // if (isPhoneNumberExist || isNameExist) {
-                            //   Fluttertoast.showToast(msg: "This phone number or name already exists in this contact list.");
-                            // } else {
-                            //   userProvider.insertNewUser(context);
-                            //   AppRough.navigatePage(context, const UserScreens());
-                            //   Fluttertoast.showToast(msg: "Add New User Success.");
-                            // }
-                          } else {
-                            Fluttertoast.showToast(msg: "Please fill in all fields.");
-                          }
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
 }

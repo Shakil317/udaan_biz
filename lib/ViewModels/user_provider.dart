@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:mycalculator/app_dialog.dart';
-import 'package:mycalculator/screens/user_screens.dart';
+import 'package:mycalculator/Utils/app_dialog.dart';
+import 'package:mycalculator/screens/home_tab_bar_screen.dart';
 import 'package:uuid/uuid.dart';
 import '../models/users_model.dart';
 import '../screens/user_contact.dart';
@@ -17,7 +17,6 @@ class UserProvider with ChangeNotifier {
   List<UsersModel> users = [];
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
-  TextEditingController amountController = TextEditingController();
   final LocalAuthentication localAuth = LocalAuthentication();
 
   UserProvider() {
@@ -55,15 +54,12 @@ class UserProvider with ChangeNotifier {
       "image": imagePath,
       "name": nameController.text.trim(),
       "number": numberController.text.trim(),
-      "userCollections": amountController.text.trim().isEmpty
-          ? "00"
-          : amountController.text.trim(),
     };
+
     await DatabaseHelper().insertUser(addUser);
     Fluttertoast.showToast(
         msg: 'Add New User Success ${numberController.text.trim()}');
     showData();
-    // clearController();
     notifyListeners();
   }
 
@@ -92,6 +88,16 @@ class UserProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+  Future<void> pickNewImageWithCamera() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      image = pickedFile;
+    } else {
+      Fluttertoast.showToast(msg: "No Image Selected");
+    }
+    notifyListeners();
+  }
+
 
   Future<void> addNewUserWithFilter(
       BuildContext context, ContactProvider contactProvider) async {
@@ -146,7 +152,7 @@ class UserProvider with ChangeNotifier {
         DatabaseHelper().updateUser(updateData, userModel.id!);
         Fluttertoast.showToast(msg: "User updated successfully");
         showData();
-        AppDialog.navigatePage(context, const UserScreens());
+        AppDialog.navigatePage(context, const HomeTabBarScreens());
         clearController();
         notifyListeners();
       } else {
@@ -186,7 +192,6 @@ class UserProvider with ChangeNotifier {
   void clearController() {
     nameController.clear();
     numberController.clear();
-    amountController.clear();
     image = null;
   }
 }

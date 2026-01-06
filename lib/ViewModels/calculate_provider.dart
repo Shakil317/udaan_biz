@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:math_expressions/math_expressions.dart';
-import 'package:mycalculator/app_dialog.dart';
+import 'package:mycalculator/Utils/app_dialog.dart';
 import '../screens/user_screens.dart';
 class CalculateProvider with ChangeNotifier {
   late String userInput = "";
