@@ -273,7 +273,7 @@ class RealUserProvider with ChangeNotifier {
         name: nameController.text.trim(),
         phone: phoneNumController.text.trim(),
         imageUrl: imageUrl,
-        usersCollection: amountController.text.trim().isEmpty ? "00" : amountController.text.trim(),
+        finalCollection:double.tryParse(amountController.text.trim()) ?? 0.0,
       );
       await newRef.set(newUser.toMap());
       clearInputs();
@@ -313,7 +313,7 @@ class RealUserProvider with ChangeNotifier {
         name: nameController.text.trim(),
         phone: phoneNumController.text.trim(),
         imageUrl: imageUrl,
-        usersCollection: '00',
+        finalCollection:user.finalCollection,
       );
       await _dbRef.child(uid).child(user.id).update(updatedUser.toMap());
       clearInputs();

@@ -22,15 +22,15 @@ class StatusViewHome extends StatelessWidget {
               unselectedLabelColor: Colors.black54,
               indicatorColor: Colors.transparent,
               tabs: const [
-                Tab(text: "Video/Image Status"),
-                Tab(text: "Cards Status"),
+                Tab(text: "Auto Cards"),
+                Tab(text: "Ai Reels"),
               ],
             ),
             const Expanded(
               child: TabBarView(
                 children: [
-                  StatusViewScreen(),
                   CardStatusScreen(),
+                  StatusViewScreen(),
                 ],
               ),
             ),

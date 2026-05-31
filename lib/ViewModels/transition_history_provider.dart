@@ -137,6 +137,7 @@ class TransitionHistoryProvider with ChangeNotifier{
     if (id != null) {
       final rows = await DatabaseHelper().deleteTransition(id);
       Fluttertoast.showToast(msg: "Deleted rows: $rows, ID: $id");
+      
       showAmountTransition();
       notifyListeners();
     } else {

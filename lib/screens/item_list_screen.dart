@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
@@ -43,8 +45,8 @@ class _ItemListScreenState extends State<ItemListScreen> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: const Icon(Icons.download),
-                          label: const Text("Save"),
+                          icon:  Icon(Icons.download,color: AppThem.appBgColor,),
+                          label:  Text("Save",style: TextStyle(color: AppThem.appSecondaryColor),),
                         ),
                       ),
                       Padding(
@@ -53,8 +55,8 @@ class _ItemListScreenState extends State<ItemListScreen> {
                           onPressed: () {
                              billProvider.saveAndSharePDF();
                           },
-                          icon: const Icon(Icons.share),
-                          label: const Text("Share"),
+                          icon:  Icon(Icons.share, color: AppThem.appBgColor,),
+                          label:  Text("Share",style: TextStyle(color: AppThem.appSecondaryColor),),
                         ),
                       ),
                     ],
@@ -73,14 +75,14 @@ class _ItemListScreenState extends State<ItemListScreen> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.8-10,
                 width: MediaQuery.of(context).size.width * 0.9,
                 padding: const EdgeInsets.only(bottom: 10),
                 // Adds space at the bottom of the container
                 decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: Colors.green),
+                  border: Border.all(width: 2, color:AppThem.appBgColor),
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
@@ -89,7 +91,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                       ),
                     ),
                     Text(profile.bankInfo.toString(),style: TextStyle(fontSize: 18),),
-                    SizedBox(height: 5,),
+                    const SizedBox(height: 5,),
                     Text( billProvider.gstNumCont.text.trim().isNotEmpty
                         ? "GSTIN: ${billProvider.gstNumCont.text.trim()}"
                         : "GSTIN: 09ABCDE1234F1Z5",),
@@ -107,7 +109,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                         SizedBox(width: 5),
                         Icon(
                           Icons.local_grocery_store_outlined,
-                          color: Colors.green,
+                          color:AppThem.appBgColor,
                           size: 18,
                         ),
                         SizedBox(width: 5),
@@ -129,10 +131,10 @@ class _ItemListScreenState extends State<ItemListScreen> {
                                 fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        SizedBox(width: 5),
-                        Icon(
+                        const SizedBox(width: 5),
+                        const Icon(
                           Icons.date_range,
-                          color: Colors.green.shade800,
+                          color: AppThem.appBgColor,
                           size: 18,
                         ),
                         const SizedBox(width: 5),
@@ -146,8 +148,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 12),
                       child: Row(
-                        children: List.generate(
-                          32,
+                        children: List.generate(32,
                               (index) => Container(
                             margin: const EdgeInsets.symmetric(horizontal: 2,vertical: 5),
                             height: 2,
@@ -157,92 +158,90 @@ class _ItemListScreenState extends State<ItemListScreen> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child:Consumer<GenerateItemListProvider>(builder: (context, value, child) {
-                        return
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Table(
-                              border: TableBorder.all(color: Colors.green),
-                              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                              columnWidths: const {
-                                0: FixedColumnWidth(40),  // No
-                                1: FixedColumnWidth(80), // Product Item
-                                2: FixedColumnWidth(50),  // Quantity
-                                3: FixedColumnWidth(50),  // Rate
-                                4: FixedColumnWidth(70),  // Value
-                              },
-                              children: [
-                                // Table Header
-                                const TableRow(
-                                  decoration: BoxDecoration(color: Colors.white),
+                    Consumer<GenerateItemListProvider>(builder: (context, value, child) {
+                      return
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Table(
+                            border: TableBorder.all(color: AppThem.appBgColor),
+                            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                            columnWidths: const {
+                              0: FixedColumnWidth(40),  // No
+                              1: FixedColumnWidth(80), // Product Item
+                              2: FixedColumnWidth(50),  // Quantity
+                              3: FixedColumnWidth(50),  // Rate
+                              4: FixedColumnWidth(70),  // Value
+                            },
+                            children: [
+                              // Table Header
+                              const TableRow(
+                                decoration: BoxDecoration(color: Colors.white),
+                                children: [
+                                  Center(
+                                      child: Text("No",
+                                          style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                  Center(
+                                      child: Text("Product Item",
+                                          style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                  Center(
+                                      child: Text("Quantity",
+                                          style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                  Center(
+                                      child: Text("Rate(₹)",
+                                          style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                  Center(
+                                      child: Text("Amount(₹)",
+                                          style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                ],
+                              ),
+                              ...List.generate(value.visibleProducts, (index) {
+                                if (value.nameCtr[index].text.isEmpty) {
+                                  return const TableRow(children: [
+                                    SizedBox(), SizedBox(), SizedBox(), SizedBox(), SizedBox()
+                                  ]);
+                                }
+
+                                return TableRow(
                                   children: [
                                     Center(
-                                        child: Text("No",
-                                            style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                      child: Text(
+                                        (index + 1).toString(),
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ),
                                     Center(
-                                        child: Text("Product Item",
-                                            style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                      child: Text(
+                                        value.nameCtr[index].text,
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ),
                                     Center(
-                                        child: Text("Quantity",
-                                            style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                      child: Text(
+                                "${value.qtyCtr[index].text} ${value.selectedUnit[index].split('(').first.trim()}",
+
+                                style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ),
                                     Center(
-                                        child: Text("Rate(₹)",
-                                            style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                      child: Text(
+                                        value.rateCtr[index].text,
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ),
                                     Center(
-                                        child: Text("Amount(₹)",
-                                            style: TextStyle(color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold))),
+                                      child: Text(
+                                        "${value.amount[index].toStringAsFixed(2)}",
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ),
                                   ],
-                                ),
-                                ...List.generate(value.visibleProducts, (index) {
-                                  if (value.nameCtr[index].text.isEmpty) {
-                                    return const TableRow(children: [
-                                      SizedBox(), SizedBox(), SizedBox(), SizedBox(), SizedBox()
-                                    ]);
-                                  }
-
-                                  return TableRow(
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          (index + 1).toString(),
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          value.nameCtr[index].text,
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Text(
-                                  "${value.qtyCtr[index].text} ${value.selectedUnit[index].split('(').first.trim()}",
-
-                                  style: const TextStyle(fontSize: 10),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          "${value.rateCtr[index].text}",
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          "${value.amount[index].toStringAsFixed(2)}",
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ],
-                            ),
-                          )
-                        ;
-                      },),
-                    ),
+                                );
+                              }),
+                            ],
+                          ),
+                        )
+                      ;
+                    },),
                      const SizedBox(height: 10,),
                      const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -273,9 +272,12 @@ class _ItemListScreenState extends State<ItemListScreen> {
                             child: SizedBox(
                               height: 50,
                               width: 50,
-                              child: Image.asset(
-                                "assets/images/shakil_upi_scaner.jpg",
-                              ),
+                              child: profile.qrImage != null
+                                  ? Image.file(File(profile.qrImage!),
+                                  fit: BoxFit.cover)
+                                  : const Image(
+                                  image: AssetImage(
+                                      "assets/images/shakil_upi_scaner.jpg")),
                             ),
                           ),
                         ),
@@ -283,8 +285,8 @@ class _ItemListScreenState extends State<ItemListScreen> {
                           padding: const EdgeInsets.only(left: 12, top: 2),
                           child:Text("प्रिय ग्राहक ${billProvider.custemerNameCont.text.trim()}, "
                               "${billProvider.holidayNameCont.text.toString()} के पावन अवसर\nपर आपको एवं आपके परिवार को हार्दिक शुभकामनाएँ।\n"
-                              "कृपया सुनिश्चित करें कि भुक्तान की प्रक्रिया जल्द ही कर\nदिया जाए,ताकि क्रेडिट सेवाएं बिना किसी रुकावट के\n जारी रह सकें "
-                              "धन्यवाद !",style: TextStyle(fontSize: 8.0,),),
+                              "यह बिल कंप्यूटर द्वारा तैयार किया गया है।\n किसी भी प्रकार की त्रुटि होने पर कृपया तुरंत सूचित करें।\n भूल-चूक लेनी-देनी। "
+                              "धन्यवाद! ${profile.shopName}",style: TextStyle(fontSize: 8.0,),),
                         ),
                       ],
                     ),

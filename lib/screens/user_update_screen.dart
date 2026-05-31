@@ -50,7 +50,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
       appBar: AppBar(
         title: const Text("Update User"),
         centerTitle: true,
-        backgroundColor: AppThem.appBarColor,
+        backgroundColor: AppThem.appBgColor,
         foregroundColor: AppThem.appTextColor,
         elevation: 2,
       ),
@@ -63,14 +63,14 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
               onTap: () => userProvider.pickNewImageWithCamera(),
               child: CircleAvatar(
                 radius: 60,
-                backgroundColor: Colors.orange.shade100,
+                backgroundColor: Colors.black12,
                 backgroundImage: userProvider.image != null
                     ? FileImage(File(userProvider.image!.path))
                     : widget.user.image != null
                     ? FileImage(File(widget.user.image!))
                     : null,
                 child: (userProvider.image == null && widget.user.image == null)
-                    ? const Icon(Icons.camera_alt, size: 40, color: AppThem.appBarColor)
+                    ? const Icon(Icons.camera_alt, size: 40, color: AppThem.appBgColor)
                     : null,
               ),
             ),
@@ -137,7 +137,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
                 icon: const Icon(Icons.save),
                 label: const Text("Update User", style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppThem.appBarColor,
+                  backgroundColor: AppThem.appBgColor,
                   foregroundColor:AppThem.appTextColor,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -162,7 +162,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
       readOnly: readOnly,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: AppThem.appBarColor),
+        prefixIcon: Icon(icon, color: AppThem.appBgColor),
         border: const OutlineInputBorder(),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppThem.appBarColor, width: 2),

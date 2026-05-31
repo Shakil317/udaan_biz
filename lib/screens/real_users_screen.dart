@@ -23,7 +23,7 @@ class _RealUsersScreenState extends State<RealUsersScreen> {
   @override
   void initState() {
     super.initState();
-      Provider.of<RealUserProvider>(context, listen: false).fetchUsers();
+    Provider.of<RealUserProvider>(context, listen: false).fetchUsers();
   }
 
   @override
@@ -143,11 +143,13 @@ class _RealUsersScreenState extends State<RealUsersScreen> {
                           ),
                           //
                           Text(
-                            "₹ ${(user.usersCollection?.toString().isNotEmpty ?? false) ? user.usersCollection : '00'}",
-                            style: const TextStyle(
+                            "₹ ${user.finalCollection.toString()}",
+                            style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.redAccent,
+                              fontWeight: FontWeight.bold,
+                              color: user.finalCollection <= 0
+                                  ? Colors.green
+                                  : Colors.redAccent,
                             ),
                           ),
                         ],
@@ -179,13 +181,13 @@ class _RealUsersScreenState extends State<RealUsersScreen> {
                             ),
                           ),
                           PopupMenuItem(
-                            value: 'Chat WhatApp',
+                            value: 'Connect With WhatApp',
                             child: ListTile(
                               leading: const Icon(Icons.chat, color: Colors.green),
-                              title: const Text("WhatApp Chat"),
+                              title: const Text("Connect With WhatApp"),
                               onTap: () async{
                                 String presetMessage =
-                                    "नमस्ते ${user.name}, आपकी वर्तमान बकाया राशि ${user.usersCollection ?? '00'}₹ है। कृपया सुनिश्चित करें कि भुगतान 10 दिनों के भीतर कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सकें। ${profileProvider.userProfile[0].shopName}🙏";
+                                    "नमस्ते ${user.name}, आपकी वर्तमान बकाया राशि ${user.finalCollection ?? '00'}₹ है। कृपया सुनिश्चित करें कि भुगतान 7 दिनों के भीतर कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सकें। ${profileProvider.userProfile[0].shopName}🙏";
                                 final sms = Uri.parse(
                                     'sms:${user.phone.toString()}?body=${Uri.encodeComponent(presetMessage)}');
                                 if (await canLaunchUrl(sms)) {
@@ -205,7 +207,7 @@ class _RealUsersScreenState extends State<RealUsersScreen> {
                                           .appSecondaryColor)),
                               onTap: () async {
                                 String presetMessage =
-                                    "नमस्ते ${user.name}, आपकी वर्तमान बकाया राशि ${user.usersCollection ?? '00'}₹ है। कृपया सुनिश्चित करें कि भुगतान 10 दिनों के भीतर कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सकें। ${profileProvider.userProfile[0].shopName}🙏";
+                                    "नमस्ते ${user.name}, आपकी वर्तमान बकाया राशि ${user.finalCollection ?? '00'}₹ है। कृपया सुनिश्चित करें कि भुगतान 7 दिनों के भीतर कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सकें। ${profileProvider.userProfile[0].shopName}🙏";
                                 final sms = Uri.parse(
                                     'sms:${user.phone.toString()}?body=${Uri.encodeComponent(presetMessage)}');
                                 if (await canLaunchUrl(sms)) {

@@ -19,30 +19,13 @@ class _GenerateItemListScreenState extends State<GenerateItemListScreen> {
     var payment = Provider.of<PaymentPaymentProvider>(context, listen: false);
     return SafeArea(
       child: Scaffold(
-        bottomSheet: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.1,
-          width: MediaQuery.of(context).size.width,
-          child: Container(
-            color: AppThem.appBgColor,
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        openGenerateBillBottomSheet(context);
-                      },
-                      icon: const Icon(Icons.open_with),
-                      label: const Text("Generate Bill"),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: AppThem.appBgColor,
+          icon:Icon(Icons.open_with,color: Colors.white,),
+          onPressed: () {
+            openGenerateBillBottomSheet(context);
+          
+        }, label: Text("Billing Item",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),),
       ),
     );
   }
@@ -87,6 +70,7 @@ class _GenerateBillBottomSheetState extends State<GenerateBillBottomSheet> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
+                    autofillHints: value.selectedUnit,
                     controller: value.custemerNameCont,
                     keyboardType: TextInputType.name,
                     style: const TextStyle(color: AppThem.appBgColor),
@@ -320,7 +304,9 @@ class _GenerateBillBottomSheetState extends State<GenerateBillBottomSheet> {
                       Text(
                         "₹ ${value.totalAmount.toStringAsFixed(2)}",
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                            fontWeight: FontWeight.bold, fontSize: 18,
+                            color: Colors.green),
+
                       ),
                     ],
                   ),
