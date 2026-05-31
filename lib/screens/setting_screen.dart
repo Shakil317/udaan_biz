@@ -2,14 +2,15 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mycalculator/Utils/app_roots.dart';
-import 'package:mycalculator/screens/special_card_screen.dart';
+import 'package:mycalculator/Utils/app_them.dart';
 import 'package:mycalculator/screens/tamplete_screen.dart';
-import 'package:mycalculator/screens/user_registation_screen.dart';
 import 'package:provider/provider.dart';
 import '../Utils/about_app.dart';
+import '../ViewModels/auth_service.dart';
 import '../ViewModels/user_provider.dart';
 import '../ViewModels/user_profile_provider.dart';
 import '../ViewModels/transition_history_provider.dart';
+import 'generate_item_list.dart';
 
 class SettingScreen extends StatefulWidget {
   final int? id;
@@ -49,6 +50,8 @@ class _SettingScreenState extends State<SettingScreen> {
     final userData = Provider.of<UserProvider>(context);
     final profileData = Provider.of<UserProfileProvider>(context);
     final transitionData = Provider.of<TransitionHistoryProvider>(context);
+    var authProvider = Provider.of<AuthService>(context,listen: false);
+
 
     return Scaffold(
       body: Consumer<UserProfileProvider>(
@@ -69,15 +72,15 @@ class _SettingScreenState extends State<SettingScreen> {
                       padding: const EdgeInsets.only(left: 8.0, bottom: 10),
                       child: Text(
                         formatText("Settings", 20),
-                        style: const TextStyle(fontSize: 28, color: Colors.black),
+                        style: const TextStyle(fontSize: 28, color: AppThem.appBgColor),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Container(
-                      height: 140,
+                      height: 120,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: AppThem.appBgColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -87,7 +90,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: CircleAvatar(
-                              radius: 48,
+                              radius: 35,
                               backgroundColor: Colors.white,
                               foregroundImage: hasImage
                                   ? (item.profileImage!.startsWith('assets/')
@@ -102,9 +105,9 @@ class _SettingScreenState extends State<SettingScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(top: 5, right: 2),
+                                padding: const EdgeInsets.only(top: 5, right: 2,left: 8.0),
                                 child: Text(
-                                  formatText(item.shopName ?? "ABC Store", 20),
+                                  formatText(item.shopName ?? "ABC Store", 35),
                                   style: const TextStyle(fontSize: 21, color: Colors.white),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -116,57 +119,12 @@ class _SettingScreenState extends State<SettingScreen> {
                                     radius: 12,
                                     backgroundImage: AssetImage("assets/images/udaan_biz_logo.png"),
                                   ),
-                                  Text(
-                                    user!.email ?? "user@example.com",
+                                  Text(user!.email ?? "user@example.com",
                                     style: const TextStyle(fontSize: 14, color: Colors.white70),
                                   ),
                                 ],
                               ),
                             ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ExpansionTile(
-                        title: const Text(
-                          "More Options",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.logout, color: Colors.red),
-                            title: const Text("Logout"),
-                            onTap: ()  {
-                              AppRoot.appAlertDialog(context: context, title: "LogOut", contentMes: "Are you sure you want to logout?", buttonText: "LogOut", toastMes: "LogOut Success", onConfirm: ()async {
-                                await FirebaseAuth.instance.signOut();
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const UserRegistationScreen(),));
-                              },);
-                            },
-                          ),
-                          const Divider(),
-                          ListTile(
-                            leading: const Icon(Icons.share),
-                            title: const Text("Share App"),
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Share feature coming soon!")),
-                              );
-                            },
-                          ),
-                          const Divider(),
-                          ListTile(
-                            leading: const Icon(Icons.info_outline),
-                            title: const Text("About App"),
-                            onTap: () {
-                           Navigator.push(context, MaterialPageRoute(builder: (context) =>  const SpecialCardScreen(),));
-                            },
                           ),
                         ],
                       ),
@@ -188,9 +146,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             leading: const Icon(Icons.card_giftcard, color: Colors.red),
                             title: const Text("Use Template"),
                             onTap: ()  {
-                             
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => AdminTemplateListScreen(id: 0,),));
-                              
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminTemplateListScreen(id: 0,),));
                             },
                           ),
                           const Divider(),
@@ -198,7 +154,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             leading: const Icon(Icons.generating_tokens_sharp),
                             title: const Text("Generated Bill"),
                             onTap: () {
-
+                              // const GenerateItemListScreen();
+                              AppRoot.appRoutePush(context: context, page: GenerateItemListScreen());
                             },
                           ),
                           const Divider(),
@@ -213,6 +170,56 @@ class _SettingScreenState extends State<SettingScreen> {
                                 children: const [
                                   Text("This app helps you manage your store and customers efficiently."),
                                 ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ExpansionTile(
+                        title: const Text(
+                          "More Options",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        children: [
+                          ListTile(
+                            leading:  const Icon(Icons.menu_book_sharp),
+                            title: const Text("Billing"),
+                            onTap: () {
+                              // const GenerateItemListScreen();
+                              AppRoot.appRoutePush(context: context, page: GenerateItemListScreen());
+                            },
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.share),
+                            title: const Text("Share App"),
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Share feature coming soon!")),
+                              );
+                            },
+                          ),
+                          const Divider(),
+
+                          ListTile(
+                            leading: const Icon(Icons.logout, color: Colors.red),
+                            title: const Text("Logout"),
+                            onTap: ()  {
+                              AppRoot.appAlertDialog(
+                                context: context,
+                                title: "LogOut",
+                                contentMes: "Are you sure you want to LogOut?",
+                                buttonText: "Yes",
+                                toastMes: "Success",
+                                onConfirm: () => authProvider.logOut(context),
                               );
                             },
                           ),

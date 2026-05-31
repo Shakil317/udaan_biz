@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mycalculator/screens/home_tab_bar_screen.dart';
 import 'package:mycalculator/screens/real_users_screen.dart';
 import 'package:mycalculator/screens/generate_item_list.dart';
+import 'package:mycalculator/screens/status_view_home.dart';
 import 'package:provider/provider.dart';
 import '../Utils/about_app.dart';
 import '../Utils/app_dialog.dart';
@@ -61,6 +62,10 @@ class _RealAccountHomePageState extends State<RealAccountHomePage> {
               return Padding(
                 padding: const EdgeInsets.only(left: 10.0, top: 2.0),
                 child: GestureDetector(
+                  onDoubleTap: () {
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeTabBarScreens(),), (route) => false,);
+                    Fluttertoast.showToast(msg: "Switch Account");
+                  },
                   onTap: () async {
                     await AppDialog.myProfileDialog(context);
                   },
@@ -169,7 +174,7 @@ class _RealAccountHomePageState extends State<RealAccountHomePage> {
             tabs: [
               Tab(text: "Customer"),
               Tab(text: "Calculator"),
-              Tab(text: "Create List"),
+              Tab(text: "Status"),
             ],
           ),
         ),
@@ -177,8 +182,7 @@ class _RealAccountHomePageState extends State<RealAccountHomePage> {
           children: [
             RealUsersScreen(),
             CalculateScreen(),
-           // StatusViewScreen(),
-            GenerateItemListScreen()
+            StatusViewHome(),
           ],
         ),
       ),

@@ -11,7 +11,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
 class CardProvider with ChangeNotifier {
-  final List<GlobalKey> shareKeys = List.generate(21, (index) => GlobalKey());
+  final List<GlobalKey> shareKeys = List.generate(39, (index) => GlobalKey());
   // final List<List<Color>> _colorPairs = [
   //   [Colors.black, Colors.orange],
   //   [Colors.green, Colors.red],

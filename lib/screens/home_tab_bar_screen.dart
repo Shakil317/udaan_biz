@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mycalculator/calculator_screens/calculator_screen.dart';
 import 'package:mycalculator/screens/real_account_home_page.dart';
+import 'package:mycalculator/screens/setting_screen.dart';
 import 'package:mycalculator/screens/status_view_home.dart';
 import 'package:mycalculator/screens/user_screens.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ import '../Utils/app_roots.dart';
 import '../Utils/app_them.dart';
 import '../ViewModels/auth_service.dart';
 import '../ViewModels/user_profile_provider.dart';
+import 'generate_item_list.dart';
 
 class HomeTabBarScreens extends StatefulWidget {
    const HomeTabBarScreens({super.key});
@@ -30,7 +32,6 @@ class _HomeTabBarScreensState extends State<HomeTabBarScreens> {
   @override
   Widget build(BuildContext context) {
     var user = FirebaseAuth.instance.currentUser;
-    var authProvider = Provider.of<AuthService>(context,listen: false);
      profileProvider = Provider.of<UserProfileProvider>(context,listen: false);
     return
       DefaultTabController(
@@ -153,16 +154,11 @@ class _HomeTabBarScreensState extends State<HomeTabBarScreens> {
           actions: [
             IconButton(
               onPressed: () {
-                AppRoot.appAlertDialog(
-                  context: context,
-                  title: "LogOut",
-                  contentMes: "Are you sure you want to LogOut?",
-                  buttonText: "Yes",
-                  toastMes: "Success",
-                  onConfirm: () => authProvider.logOut(context),
-                );
+                AppDialog.navigatePage(
+                    context,
+                    const SettingScreen());
               },
-              icon:  Icon(Icons.logout, color: AppThem.appTextColor),
+              icon:  Icon(Icons.settings, color: AppThem.appTextColor),
             ),
           ],
 
@@ -173,7 +169,7 @@ class _HomeTabBarScreensState extends State<HomeTabBarScreens> {
             tabs: [
               Tab(text: "Customer"),
               Tab(text: "Calculator"),
-              Tab(text: "Status"),
+              Tab(text: "Billing"),
             ],
           ),
         ),
@@ -181,7 +177,7 @@ class _HomeTabBarScreensState extends State<HomeTabBarScreens> {
           children: [
             UserScreens(),
             CalculateScreen(),
-            StatusViewHome(),
+            GenerateItemListScreen(),
           ],
         ),
       ),

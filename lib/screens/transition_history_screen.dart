@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mycalculator/Utils/app_roots.dart';
 import 'package:mycalculator/Utils/app_dialog.dart';
+import 'package:mycalculator/ViewModels/user_profile_provider.dart';
 import 'package:mycalculator/calculator_screens/calculator_screen.dart';
 import 'package:mycalculator/screens/downloas_pdf_screen.dart';
 import 'package:mycalculator/screens/tamplete_screen.dart';
@@ -96,6 +97,9 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
       ),
       body: Consumer<TransitionHistoryProvider>(builder: (context, data, child) {
         data.transitionList.toSet().toList();
+      var profile =  Provider.of<UserProfileProvider>(context, listen: false);
+      var uProfile = profile.userProfile[0];
+
         return ListView.builder(
           controller: data.transitionScrollController,
           itemCount: data.transitionList.length,
@@ -166,7 +170,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               tooltip: "Send Message",
                               onPressed: () async{
                                 String presetMessage =
-                                    "नमस्ते ${widget.name}, आज आपने ₹${item.receivedMoney ?? '00'} जमा किए हैं। आपके विश्वास और भुगतान के लिए धन्यवाद!🙂";
+                                    "नमस्ते ${widget.name}, आज आपने ₹${item.receivedMoney ?? '00'} जमा किए हैं। आपके विश्वास और भुगतान के लिए धन्यवाद!🙂 ${uProfile.shopName}";
 
                                 final sms = Uri.parse(
                                     'sms:${widget.number.toString()}?body=${Uri.encodeComponent(presetMessage)}');
@@ -276,7 +280,7 @@ class _TransitionHistoryScreenState extends State<TransitionHistoryScreen> {
                               tooltip: "Send Reminder Message",
                               onPressed: ()async {
                                 String presetMessage =
-                                    "नमस्ते ${widget.name}, आज ₹${item.loanedMoney ?? '00'} की एंट्री आपके उधारी खाते में जोड़ी गई है। कृपया अपनी नोटबुक में भी दर्ज कर लें। धन्यवाद! 🙏";
+                                    "नमस्ते ${widget.name}, आज ₹${item.loanedMoney ?? '00'} की एंट्री आपके उधारी खाते में जोड़ी गई है। कृपया सुनिश्चित करें कि भुगतान जल्द ही कर दिया जाए, ताकि क्रेडिट सेवाएं बिना किसी रुकावट के जारी रह सके। धन्यवाद! ${uProfile.shopName} 🙏";
                                 final sms = Uri.parse(
                                     'sms:${widget.number.toString()}?body=${Uri.encodeComponent(presetMessage)}');
                                 if (await canLaunchUrl(sms)) {

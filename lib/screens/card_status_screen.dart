@@ -157,39 +157,154 @@ class _CardStatusScreenState extends State<CardStatusScreen> {
                     {
                       "about":
                           "हमसे जुड़िए – और अनुभव कीजिए एक ऐसी सेवा, जो सिर्फ व्यापार नहीं, एक रिश्ते को निभाती है!",
-                      "colors": [Colors.blue, Colors.purple],
+                      "colors": [Colors.black, Colors.black12],
                       "shareKey": cardProvider.shareKeys[15],
                     },
                     {
                       "about":
                           "शुद्धता का वादा, उचित दाम की गारंटी – आपके विश्वास के साथ बढ़ते कदम!",
-                      "colors": [Colors.blue, Colors.purple],
+                      "colors": [Colors.blueGrey, Colors.purple],
                       "shareKey": cardProvider.shareKeys[16],
                     },
                     {
                       "about":
                           "विश्वास, सुविधा और गुणवत्ता – ये तीनों अब एक ही छत के नीचे आपके अपने स्टोर में!",
-                      "colors": [Colors.blue, Colors.purple],
+                      "colors": [Colors.purple, Colors.purpleAccent],
                       "shareKey": cardProvider.shareKeys[17],
                     },
                     {
                       "about":
                           "अब न भागदौड़, न अलग-अलग जगहों पर जाना – हर ज़रूरत का सामान मिलेगा हमारे यहाँ, वो भी भरोसे और प्यार के साथ!",
-                      "colors": [Colors.blue, Colors.purple],
+                      "colors": [Colors.blue, Colors.greenAccent],
                       "shareKey": cardProvider.shareKeys[18],
                     },
                     {
                       "about":
                           "सभी घरेलू ज़रूरतों का समाधान – दूध, दही, घी, फल, सब्ज़ी और राशन – सब कुछ एक ही जगह पर!",
-                      "colors": [Colors.blue, Colors.purple],
+                      "colors": [Colors.yellow, Colors.blue],
                       "shareKey": cardProvider.shareKeys[19],
                     },
                     {
                       "about":
                           "भरोसे, गुणवत्ता और सस्ती कीमत का संगम – एक ऐसा नाम जिस पर पूरा परिवार भरोसा कर सके!",
-                      "colors": [Colors.blue, Colors.purple],
+                      "colors": [Colors.green, Colors.black],
                       "shareKey": cardProvider.shareKeys[20],
                     },
+
+                  //
+                  //   {
+                  //     "about": "हर ग्राहक हमारे लिए खास है – आपका विश्वास ही हमारी पहचान है!",
+                  //     "colors": [Colors.green, Colors.blue],
+                  //     "shareKey": cardProvider.shareKeys[21],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "काम ऐसा जो दिल जीत ले, और सेवा ऐसी जो याद रह जाए!",
+                  //     "colors": [Colors.blue, Colors.cyan],
+                  //     "shareKey": cardProvider.shareKeys[22],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "विश्वास की मजबूत नींव पर खड़ी आपकी अपनी पहचान!",
+                  //     "colors": [Colors.deepPurple, Colors.blue],
+                  //     "shareKey": cardProvider.shareKeys[23],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "काम भी ज़बरदस्त, अंदाज़ भी शानदार – एक बार आएँगे तो बार-बार याद करेंगे!",
+                  //     "colors": [Colors.yellow, Colors.orange],
+                  //     "shareKey": cardProvider.shareKeys[24],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "यहाँ सिर्फ सामान नहीं, मुस्कान भी फ्री मिलती है ",
+                  //     "colors": [Colors.pink, Colors.orange],
+                  //     "shareKey": cardProvider.shareKeys[25],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "दुकान छोटी हो या बड़ी – दिल हमेशा बड़ा मिलता है यहाँ!",
+                  //     "colors": [Colors.green, Colors.teal],
+                  //     "shareKey": cardProvider.shareKeys[26],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "रेट कम, क्वालिटी दमदार – बाकी सब बेकार ",
+                  //     "colors": [Colors.blue, Colors.red],
+                  //     "shareKey": cardProvider.shareKeys[27],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "जो एक बार जुड़ा, वो बार-बार मुड़ा ",
+                  //     "colors": [Colors.purple, Colors.orange],
+                  //     "shareKey": cardProvider.shareKeys[28],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "जनसेवा ही हमारा धर्म, और आपका विश्वास हमारी ताकत!",
+                  //     "colors": [Colors.orange, Colors.green],
+                  //     "shareKey": cardProvider.shareKeys[29],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "हर आवाज़ की कदर, हर इंसान का सम्मान!",
+                  //     "colors": [Colors.blue, Colors.white],
+                  //     "shareKey": cardProvider.shareKeys[30],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "विकास, विश्वास और जनता के साथ का संकल्प!",
+                  //     "colors": [Colors.green, Colors.orange],
+                  //     "shareKey": cardProvider.shareKeys[31],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "जनता का साथ, सेवा का विश्वास – यही है हमारा प्रयास!",
+                  //     "colors": [Colors.red, Colors.green],
+                  //     "shareKey": cardProvider.shareKeys[32],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "आपका भरोसा ही हमारी सबसे बड़ी जीत है!",
+                  //     "colors": [Colors.blue, Colors.orange],
+                  //     "shareKey": cardProvider.shareKeys[33],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "हर घर की आवाज़, हर दिल का विश्वास!",
+                  //     "colors": [Colors.purple, Colors.red],
+                  //     "shareKey": cardProvider.shareKeys[34],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "बेहतर सेवा, बेहतर गुणवत्ता और बेहतर भरोसा – सब कुछ एक साथ!",
+                  //     "colors": [Colors.cyan, Colors.blue],
+                  //     "shareKey": cardProvider.shareKeys[35],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "हर दिन बेहतर बनने की कोशिश – सिर्फ आपके लिए!",
+                  //     "colors": [Colors.teal, Colors.green],
+                  //     "shareKey": cardProvider.shareKeys[36],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "जहाँ गुणवत्ता और भरोसा कभी समझौता नहीं करते!",
+                  //     "colors": [Colors.indigo, Colors.deepPurple],
+                  //     "shareKey": cardProvider.shareKeys[37],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "आपकी खुशी ही हमारी सफलता की असली पहचान है!",
+                  //     "colors": [Colors.purpleAccent, Colors.deepOrange],
+                  //     "shareKey": cardProvider.shareKeys[38],
+                  //   },
+                  //
+                  //   {
+                  //     "about": "नाम ही काफी है – भरोसे और सेवा की पहचान!",
+                  //     "colors": [Colors.black45, Colors.yellow],
+                  //     "shareKey": cardProvider.shareKeys[39],
+                  //   },
                   ];
                   return ListView.builder(
                     itemCount: cardData.length,

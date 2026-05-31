@@ -72,12 +72,18 @@ class RealTransitionHistoryProvider with ChangeNotifier {
         yourCollection: yourCollectionData.toString(),
       );
       await _rootRef.child(_ownerUid!).child(customersId!).child("transactions").child(transitionKey).set(model.toMap());
-      await _rootRef.child(_ownerUid!).child(customersId!).update({
-        "finalCollection": amount.toString(),
+      await FirebaseDatabase.instance
+          .ref()
+          .child("Customers")
+          .child(_ownerUid!)
+          .child(customersId!)
+          .update({
+        "finalCollection": yourCollectionData,
         "lastUpdated": DateTime.now().toIso8601String(),
       });
+
       var updateUser = {
-        "finalCollection":amount.toString(),
+        "finalCollection":yourCollectionData.toString(),
       };
       await _rootRef.child(_ownerUid!).child(customersId!).update(updateUser);
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -141,20 +147,6 @@ class RealTransitionHistoryProvider with ChangeNotifier {
     });
   }
 
-  // Future<void> deleteTransition(String transitionId) async {
-  //   if (_ownerUid == null || customersId == null) return;
-  //   try {
-  //     await _rootRef
-  //         .child(_ownerUid!)
-  //         .child(customersId!)
-  //         .child('transactions')
-  //         .child(transitionId).remove();
-  //     await fetchTransitions();
-  //   } catch (e) {
-  //     debugPrint("❌ deleteTransition error: $e");
-  //   }
-  // }
-
   void deleteTransitionWithAuth(BuildContext context, String transitionId)async{
     bool isAvailable;
     isAvailable = await localAuth.canCheckBiometrics;
@@ -175,6 +167,18 @@ class RealTransitionHistoryProvider with ChangeNotifier {
               .child(customersId!)
               .child('transactions')
               .child(transitionId).remove();
+          transitionList.removeWhere((t) => t.transitionId == transitionId);
+          _recalculateCollections();
+          await FirebaseDatabase.instance
+              .ref()
+              .child("Customers")
+              .child(_ownerUid!)
+              .child(customersId!)
+              .update({
+            "finalCollection": yourCollectionData,
+            "lastUpdated": DateTime.now().toIso8601String(),
+          });
+          Fluttertoast.showToast(msg: "Transaction Deleted Successfully!");
           await fetchTransitions();
         } catch (e) {
           debugPrint("❌ deleteTransition error: $e");

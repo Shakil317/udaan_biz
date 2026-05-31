@@ -75,9 +75,9 @@ class _UserScreensState extends State<UserScreens> {
                         color: AppThem.appBgColor),
                     suffixIcon: IconButton(
                         onPressed: () {},
-                        icon: Icon(Icons.mic,)),
+                        icon: const Icon(Icons.mic,)),
                     hintText: "Search User By Name....",
-                    hintStyle: TextStyle(fontSize: 16),
+                    hintStyle: const TextStyle(fontSize: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: const BorderSide(
@@ -247,7 +247,7 @@ class _UserScreensState extends State<UserScreens> {
                                   child: ListTile(
                                     leading: const Icon(Icons.call,
                                         color: AppThem.appBgColor),
-                                    title: Text("Calling",
+                                    title: Text("Connect with Call",
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: AppThem
@@ -312,22 +312,6 @@ class _UserScreensState extends State<UserScreens> {
                                       AppDialog.navigatePage(
                                           context,
                                           UpdateUserScreen(user: user));
-                                    },
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  child: ListTile(
-                                    leading: const Icon(Icons.settings,
-                                        color: AppThem.appBgColor),
-                                    title: Text("Settings",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: AppThem
-                                                .appSecondaryColor)),
-                                    onTap: () {
-                                      AppDialog.navigatePage(
-                                          context,
-                                          const SettingScreen());
                                     },
                                   ),
                                 ),

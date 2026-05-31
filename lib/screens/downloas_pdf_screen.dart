@@ -24,7 +24,6 @@ class DownloadsPdfScreenState extends StatefulWidget {
 class _DownloadsPdfScreenStateState extends State<DownloadsPdfScreenState> {
   late TransitionHistoryProvider creditProvider;
   final GlobalKey _shareKey = GlobalKey();
-  // late UserProvider userProfile;
 
   @override
   void initState() {
